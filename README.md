@@ -1,5 +1,7 @@
 # Discord Server Dumper
 
+Dumps logs and image attachments from a discord server you have a bot in.
+
 ```
 Discord server data dumper. Usage:
 `./dumper.py BotApiKey ServerId`
