@@ -44,26 +44,30 @@ class dumper(discord.Client):
 							print("Dumping... " + channel.name + "-" + str(channel.id))
 							linecount = 0
 							attachmentcount = 0
-							async for histm in channel.history(limit=None, oldest_first=True):
-								self.write_line(f, histm)
-								try:
-									if histm.attachments:
-										for attach in histm.attachments:
-											filename = foldername + "/" + channel.name + "-" + str(channel.id) + "-attachments/" + str(histm.id) + "-" + attach.filename
-											try:
-												await attach.save(filename)
-												print("Saved " + filename)
-												attachmentcount += 1
-											except discord.HTTPException:
-												print("Failed to save attachment: " + filename)
-											except discord.NotFound:
-												print("Attachment was deleted: " + filename)
-								except AttributeError:
-									pass
-								linecount += 1
-								if ((linecount%1000)==0):
-									print(str(linecount/1000).split(".")[0] + "k lines")
-							print("Dumped " + str(linecount) + " lines and " + str(attachmentcount) + " from " + channel.name + "-" + str(channel.id))
+							try:
+								async for histm in channel.history(limit=None, oldest_first=True):
+									self.write_line(f, histm)
+									try:
+										if histm.attachments:
+											for attach in histm.attachments:
+												filename = foldername + "/" + channel.name + "-" + str(channel.id) + "-attachments/" + str(histm.id) + "-" + attach.filename
+												try:
+													await attach.save(filename)
+													print("Saved " + filename)
+													attachmentcount += 1
+												except discord.HTTPException:
+													print("Failed to save attachment: " + filename)
+												except discord.NotFound:
+													print("Attachment was deleted: " + filename)
+									except AttributeError:
+										pass
+									linecount += 1
+									if ((linecount%1000)==0):
+										print(str(linecount/1000).split(".")[0] + "k lines")
+								print("Dumped " + str(linecount) + " lines and " + str(attachmentcount) + " from " + channel.name + "-" + str(channel.id))
+							except discord.errors.Forbidden:
+								print("Missing permissions for " + channel.name + "-" + str(channel.id))
+								pass
 					except AttributeError:
 						pass
 			except FileExistsError:
